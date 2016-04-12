@@ -70,10 +70,11 @@ public abstract class TagSupport extends javax.servlet.jsp.tagext.TagSupport{
 
 	@Override
 	public int doStartTag() throws JspException {
+		int rst=super.doStartTag();
 		localVariableStack.push(new HashMap<String, Object>());
 		pageAttributeStack.push(new HashMap<String, Object>());
 		requestAttributeStack.push(new HashMap<String, Object>());
-		return super.doStartTag();
+		return rst;
 	}
 
 	@Override

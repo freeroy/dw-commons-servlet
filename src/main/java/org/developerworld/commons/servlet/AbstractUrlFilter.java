@@ -40,6 +40,7 @@ public abstract class AbstractUrlFilter implements Filter {
 	private String includeWildcard;
 	private String excludeWildcard;
 	private String filterType;
+	private String filterMethod;
 
 	public String getIncludeRegular() {
 		return includeRegular;
@@ -81,6 +82,14 @@ public abstract class AbstractUrlFilter implements Filter {
 		this.filterType = filterType;
 	}
 
+	public String getFilterMethod() {
+		return filterMethod;
+	}
+
+	public void setFilterMethod(String filterMethod) {
+		this.filterMethod = filterMethod;
+	}
+
 	public void init(FilterConfig filterConfig) throws ServletException {
 		this.includeRegular = filterConfig.getInitParameter("includeRegular");
 		this.excludeRegular = filterConfig.getInitParameter("excludeRegular");
@@ -89,6 +98,7 @@ public abstract class AbstractUrlFilter implements Filter {
 		this.filterType = filterConfig.getInitParameter("filterType");
 		if(this.filterType==null)
 			this.filterType=TYPE_NOT_MATCH_JUMP_FILTER;
+		this.filterMethod=filterConfig.getInitParameter("filterMethod");
 		log.info(this.getClass() + " init ");
 	}
 
@@ -96,7 +106,12 @@ public abstract class AbstractUrlFilter implements Filter {
 			FilterChain filterChain) throws IOException, ServletException {
 		HttpServletRequest _request = (HttpServletRequest) request;
 		String url = _request.getServletPath();
+		String method=_request.getMethod();
 		boolean pass = true;
+		if(pass && StringUtils.isNotBlank(method) && StringUtils.isNotBlank(filterMethod)){
+			if((","+filterMethod.trim()+",").toLowerCase().indexOf(","+method.trim().toLowerCase()+",")==-1)
+				pass=false;
+		}
 		if (pass && includeRegular != null) {
 			Pattern pattern = Pattern.compile(includeRegular);
 			Matcher matcher = pattern.matcher(url);
