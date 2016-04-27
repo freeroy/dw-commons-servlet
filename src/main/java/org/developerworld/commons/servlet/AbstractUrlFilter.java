@@ -96,35 +96,35 @@ public abstract class AbstractUrlFilter implements Filter {
 		this.includeWildcard = filterConfig.getInitParameter("includeWildcard");
 		this.excludeWildcard = filterConfig.getInitParameter("excludeWildcard");
 		this.filterType = filterConfig.getInitParameter("filterType");
-		if(this.filterType==null)
-			this.filterType=TYPE_NOT_MATCH_JUMP_FILTER;
-		this.filterMethod=filterConfig.getInitParameter("filterMethod");
+		if (this.filterType == null)
+			this.filterType = TYPE_NOT_MATCH_JUMP_FILTER;
+		this.filterMethod = filterConfig.getInitParameter("filterMethod");
 		log.info(this.getClass() + " init ");
 	}
 
-	public void doFilter(ServletRequest request, ServletResponse response,
-			FilterChain filterChain) throws IOException, ServletException {
+	public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+			throws IOException, ServletException {
 		HttpServletRequest _request = (HttpServletRequest) request;
 		String url = _request.getServletPath();
-		String method=_request.getMethod();
+		String method = _request.getMethod();
 		boolean pass = true;
-		if(pass && StringUtils.isNotBlank(method) && StringUtils.isNotBlank(filterMethod)){
-			if((","+filterMethod.trim()+",").toLowerCase().indexOf(","+method.trim().toLowerCase()+",")==-1)
-				pass=false;
+		if (pass && StringUtils.isNotBlank(filterMethod)) {
+			pass = method != null && ("," + filterMethod.trim() + ",").toLowerCase()
+					.indexOf("," + method.trim().toLowerCase() + ",") == -1;
 		}
-		if (pass && includeRegular != null) {
+		if (pass && StringUtils.isNotBlank(includeRegular)) {
 			Pattern pattern = Pattern.compile(includeRegular);
 			Matcher matcher = pattern.matcher(url);
 			pass = matcher.matches();
 		}
-		if (pass && excludeRegular != null) {
+		if (pass && StringUtils.isNotBlank(excludeRegular)) {
 			Pattern pattern = Pattern.compile(excludeRegular);
 			Matcher matcher = pattern.matcher(url);
 			pass = !matcher.matches();
 		}
-		if (pass && includeWildcard != null)
+		if (pass && StringUtils.isNotBlank(includeWildcard))
 			pass = StringUtils.wildcardCapture(includeWildcard, url);
-		if (pass && excludeWildcard != null)
+		if (pass && StringUtils.isNotBlank(excludeWildcard))
 			pass = !StringUtils.wildcardCapture(excludeWildcard, url);
 		// 若通过，则继续执行
 		if (pass)
@@ -142,8 +142,8 @@ public abstract class AbstractUrlFilter implements Filter {
 	 * @throws IOException
 	 * @throws ServletException
 	 */
-	public void doWhenUnpass(ServletRequest arg0, ServletResponse arg1,
-			FilterChain arg2) throws IOException, ServletException {
+	public void doWhenUnpass(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
+			throws IOException, ServletException {
 		if (TYPE_NOT_MATCH_JUMP_FILTER.equals(filterType))
 			arg2.doFilter(arg0, arg1);
 	}
@@ -157,9 +157,8 @@ public abstract class AbstractUrlFilter implements Filter {
 	 * @throws ServletException
 	 * @throws IOException
 	 */
-	abstract public void doFilterWhenUrlPass(ServletRequest arg0,
-			ServletResponse arg1, FilterChain arg2) throws IOException,
-			ServletException;
+	abstract public void doFilterWhenUrlPass(ServletRequest arg0, ServletResponse arg1, FilterChain arg2)
+			throws IOException, ServletException;
 
 	public void destroy() {
 		log.info(this.getClass() + " destroy ");
