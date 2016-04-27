@@ -11,7 +11,7 @@
 	<artifactId>dw-commons-servlet</artifactId>
 	<packaging>jar</packaging>
 	<name>dw-commons-servlet</name>
-	<version>0.0.6-SNAPSHOT</version>
+	<version>0.0.6</version>
 	<description>j2ee servlet支持工具包</description>
 
 	<!-- scm配置 -->
