@@ -110,7 +110,7 @@ public abstract class AbstractUrlFilter implements Filter {
 		boolean pass = true;
 		if (pass && StringUtils.isNotBlank(filterMethod)) {
 			pass = method != null && ("," + filterMethod.trim() + ",").toLowerCase()
-					.indexOf("," + method.trim().toLowerCase() + ",") == -1;
+					.indexOf("," + method.trim().toLowerCase() + ",") != -1;
 		}
 		if (pass && StringUtils.isNotBlank(includeRegular)) {
 			Pattern pattern = Pattern.compile(includeRegular);
